@@ -15,10 +15,14 @@ jobs:
 
     strategy:
       matrix:
-        service:
+        service_dir:
           - "src/Customer Service"
           - "src/Report Service"
           - "src/Sales Service"
+        container_name:
+          - "customer-service"
+          - "reporting-service"
+          - "app"
 
     steps:
       - name: Checkout Code
@@ -35,15 +39,17 @@ jobs:
 
       - name: Generate .env File
         run: |
-            if [[ "${{ matrix.service }}" == "src/Customer Service" ]]; then
-              echo "${{ secrets.CUSTOMER_SERVICE_ENV }}" > "${{ matrix.service }}/.env"
-            elif [[ "${{ matrix.service }}" == "src/Report Service" ]]; then
-              echo "${{ secrets.REPORT_SERVICE_ENV }}" > "${{ matrix.service }}/.env"
+            if [[ "${{ matrix.service_dir }}" == "src/Customer Service" ]]; then
+              echo "${{ secrets.CUSTOMER_SERVICE_ENV }}" > "${{ matrix.service_dir }}/.env"
+            elif [[ "${{ matrix.service_dir }}" == "src/Report Service" ]]; then
+              echo "${{ secrets.REPORT_SERVICE_ENV }}" > "${{ matrix.service_dir }}/.env"
             fi
-            
+
       - name: Build and Push Docker Image
         run: |
-          cd "${{ matrix.service }}"
-          IMAGE_NAME=$(echo "${{ matrix.service }}" | tr '[:upper:] ' '[:lower:]_')
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${IMAGE_NAME}:latest
+          SERVICE_DIR="${{ matrix.service_dir }}"
+          CONTAINER_NAME="${{ matrix.container_name }}"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${CONTAINER_NAME}"
+          cd "${SERVICE_DIR}"
+          docker build -t ${IMAGE_NAME}:latest .
+          docker push ${IMAGE_NAME}:latest
