@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         service:
-          - src/Customer Service
-          - src/Report Service
-          - src/Sales Service
+          - "src/Customer Service"
+          - "src/Report Service"
+          - "src/Sales Service"
 
     steps:
       - name: Checkout Code
@@ -35,6 +35,6 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          cd ${{ matrix.service }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest
+          cd "${{ matrix.service }}"
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/$(echo "${{ matrix.service }}" | tr ' ' '_'):latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/$(echo "${{ matrix.service }}" | tr ' ' '_'):latest
