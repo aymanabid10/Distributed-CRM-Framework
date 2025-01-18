@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         service:
-          - src/Customer Management
-          - src/reporting Service
-          - src/Sales Tracking Service
+          - src/Customer Service
+          - src/Report Service
+          - src/Sales Service
 
     steps:
       - name: Checkout Code
