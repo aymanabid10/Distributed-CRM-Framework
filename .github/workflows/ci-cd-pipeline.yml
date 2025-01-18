@@ -33,6 +33,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Generate .env File
+        run: |
+            if [[ "${{ matrix.service }}" == "src/Customer Service" ]]; then
+              echo "${{ secrets.CUSTOMER_SERVICE_ENV }}" > "${{ matrix.service }}/.env"
+            elif [[ "${{ matrix.service }}" == "src/Report Service" ]]; then
+              echo "${{ secrets.REPORT_SERVICE_ENV }}" > "${{ matrix.service }}/.env"
+            fi
+            
       - name: Build and Push Docker Image
         run: |
           cd "${{ matrix.service }}"
